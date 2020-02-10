@@ -1,0 +1,69 @@
+App\Entity\User:
+  attributes:
+    normalization_context:
+      groups: ['user_read']
+  collectionOperations:
+    get:
+      method: 'GET'
+      security: 'is_granted("USER_READ")'
+    register_user:
+      method: 'POST'
+      route_name: 'user_register'
+      denormalization_context:
+        groups: ['user_post']
+      openapi_context:
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  password:
+                    type: string
+        parameters: []
+        responses:
+          201:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+  itemOperations:
+    get:
+      method: 'GET'
+      security: 'is_granted("USER_READ", object)'
+    put:
+      method: 'PUT'
+      security: 'is_granted("USER_UPDATE", object)'
+      denormalization_context:
+        groups: ['user_put']
+      swagger_context:
+        parameters:
+          - in: body
+            name: user
+            description: The user to update
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - roles
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                roles:
+                  type: array
+                  items:
+                    type: string
+    delete:
+      method: 'DELETE'
+      security: 'is_granted("USER_DELETE", object)'

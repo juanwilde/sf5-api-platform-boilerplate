@@ -1,0 +1,58 @@
+version: '3.5'
+
+services:
+  sf5-api-platform-docker-web:
+    container_name: sf5-api-platform-docker-web
+    build:
+      context: ./docker/nginx
+      args:
+        UID: $U_ID
+    ports:
+      - 500:80
+    volumes:
+      - ./public:/appdata/www/public
+    depends_on:
+      - sf5-api-platform-docker-be
+    networks:
+      - sf5-api-platform-docker-network
+
+  sf5-api-platform-docker-be:
+    container_name: sf5-api-platform-docker-be
+    build:
+      context: docker/php
+      args:
+        UID: $U_ID
+    environment:
+      PHP_IDE_CONFIG: serverName=Docker
+      PHP_XDEBUG_ENABLED: 1
+      XDEBUG_CONFIG: remote_host=172.17.0.1 remote_port=9005
+    volumes:
+      - ./:/appdata/www
+      - ./docker/php/xdebug-linux.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      - ~/.ssh/id_rsa:/home/appuser/.ssh/id_rsa
+    depends_on:
+      - sf5-api-platform-docker-db
+    networks:
+      - sf5-api-platform-docker-network
+
+  sf5-api-platform-docker-db:
+    container_name: sf5-api-platform-docker-db
+    image: mysql:5.7
+    ports:
+      - 3350:3306
+    environment:
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    command: mysqld --sql_mode="STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION"
+    volumes:
+      - sf5-api-platform-docker-db-data:/var/lib/mysql
+    networks:
+      - sf5-api-platform-docker-network
+
+volumes:
+  sf5-api-platform-docker-db-data:
+
+networks:
+  sf5-api-platform-docker-network:
