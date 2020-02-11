@@ -7,6 +7,7 @@
         <field name="email" />
         <field name="password" />
         <field name="roles" type="simple_array" />
+        <field name="token" nullable="true" />
         <field name="createdAt" type="datetime" />
         <field name="updatedAt" type="datetime" />
 

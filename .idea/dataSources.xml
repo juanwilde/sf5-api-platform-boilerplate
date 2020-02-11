@@ -7,5 +7,11 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3350</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="sf5-docker" uuid="c6ed22aa-af66-4813-b07b-fa2594031325">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3350</jdbc-url>
+    </data-source>
   </component>
 </project>

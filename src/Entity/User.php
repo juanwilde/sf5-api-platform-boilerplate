@@ -15,6 +15,7 @@ class User implements UserInterface
     private string $email;
     private string $password;
     private array $roles;
+    private ?string $token = null;
     private \DateTime $createdAt;
     private \DateTime $updatedAt;
 
@@ -27,6 +28,7 @@ class User implements UserInterface
         $this->name = $name;
         $this->email = $email;
         $this->roles[] = Role::ROLE_USER;
+        $this->token = \sha1(\uniqid('app'));
         $this->createdAt = new \DateTime();
         $this->markAsUpdated();
     }
@@ -74,6 +76,16 @@ class User implements UserInterface
     public function setRoles(array $roles): void
     {
         $this->roles = $roles;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): void
+    {
+        $this->token = $token;
     }
 
     public function getCreatedAt(): \DateTime

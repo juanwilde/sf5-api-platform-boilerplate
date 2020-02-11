@@ -23,6 +23,7 @@ final class Version20191216131100 extends AbstractMigration
                 email VARCHAR(100) NOT NULL,
                 password BINARY(200) NOT NULL,
                 roles VARCHAR(100) NOT NULL,
+                token VARCHAR(100) DEFAULT NULL,
                 created_at DATETIME NOT NULL,
                 updated_at DATETIME NOT NULL
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ENGINE = InnoDB'

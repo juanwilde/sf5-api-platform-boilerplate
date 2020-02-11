@@ -35,6 +35,33 @@ App\Entity\User:
                   properties:
                     token:
                       type: string
+    login:
+      method: 'POST'
+      route_name: 'api_login_check'
+      denormalization_context:
+        groups: ['user_post']
+      openapi_context:
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+        parameters: []
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    token:
+                      type: string
   itemOperations:
     get:
       method: 'GET'

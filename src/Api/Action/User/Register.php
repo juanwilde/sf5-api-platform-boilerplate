@@ -5,26 +5,18 @@ declare(strict_types=1);
 namespace App\Api\Action\User;
 
 use App\Api\Action\RequestTransformer;
-use App\Entity\User;
-use App\Exception\User\UserAlreadyExistException;
-use App\Repository\UserRepository;
-use App\Service\Password\EncoderService;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use App\Service\User\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class Register
 {
-    private UserRepository $userRepository;
-    private JWTTokenManagerInterface $JWTTokenManager;
-    private EncoderService $encoderService;
+    private UserService $userService;
 
-    public function __construct(UserRepository $userRepository, JWTTokenManagerInterface $JWTTokenManager, EncoderService $encoderService)
+    public function __construct(UserService $userService)
     {
-        $this->userRepository = $userRepository;
-        $this->JWTTokenManager = $JWTTokenManager;
-        $this->encoderService = $encoderService;
+        $this->userService = $userService;
     }
 
     /**
@@ -34,22 +26,12 @@ class Register
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $name = RequestTransformer::getRequiredField($request, 'name');
-        $email = RequestTransformer::getRequiredField($request, 'email');
-        $password = RequestTransformer::getRequiredField($request, 'password');
+        $token = $this->userService->create(
+            RequestTransformer::getRequiredField($request, 'name'),
+            RequestTransformer::getRequiredField($request, 'email'),
+            RequestTransformer::getRequiredField($request, 'password')
+        );
 
-        $existingUser = $this->userRepository->findOneByEmail($email);
-        if (null !== $existingUser) {
-            throw UserAlreadyExistException::fromUserEmail($email);
-        }
-
-        $user = new User($name, $email);
-        $user->setPassword($this->encoderService->generateEncodedPasswordForUser($user, $password));
-
-        $this->userRepository->save($user);
-
-        $jwt = $this->JWTTokenManager->create($user);
-
-        return new JsonResponse(['token' => $jwt], JsonResponse::HTTP_CREATED);
+        return new JsonResponse(['token' => $token], JsonResponse::HTTP_CREATED);
     }
 }

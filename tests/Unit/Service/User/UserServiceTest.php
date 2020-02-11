@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Api\Action\User;
+namespace App\Tests\Unit\Service\User;
 
-use App\Api\Action\User\Register;
 use App\Entity\User;
 use App\Exception\User\UserAlreadyExistException;
 use App\Repository\UserRepository;
+use App\Service\Mailer\MailerService;
 use App\Service\Password\EncoderService;
+use App\Service\User\UserService;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
-class RegisterTest extends TestCase
+class UserServiceTest extends TestCase
 {
     /** @var UserRepository|MockObject */
     private $userRepository;
@@ -26,15 +25,21 @@ class RegisterTest extends TestCase
     /** @var EncoderService|MockObject */
     private $encoderService;
 
-    private Register $action;
+    /** @var MailerService|MockObject */
+    private $mailerService;
+
+    private string $host = 'https://myapp.com';
+
+    private UserService $userService;
 
     public function setUp(): void
     {
         $this->userRepository = $this->getMockBuilder(UserRepository::class)->disableOriginalConstructor()->getMock();
         $this->JWTTokenManager = $this->getMockBuilder(JWTTokenManagerInterface::class)->disableOriginalConstructor()->getMock();
         $this->encoderService = $this->getMockBuilder(EncoderService::class)->disableOriginalConstructor()->getMock();
+        $this->mailerService = $this->getMockBuilder(MailerService::class)->disableOriginalConstructor()->getMock();
 
-        $this->action = new Register($this->userRepository, $this->JWTTokenManager, $this->encoderService);
+        $this->userService = new UserService($this->userRepository, $this->JWTTokenManager, $this->encoderService, $this->mailerService, $this->host);
     }
 
     /**
@@ -47,8 +52,6 @@ class RegisterTest extends TestCase
             'email' => 'username@api.com',
             'password' => 'random_password',
         ];
-
-        $request = new Request([], [], [], [], [], [], \json_encode($payload));
 
         $this->userRepository
             ->expects($this->exactly(1))
@@ -73,9 +76,9 @@ class RegisterTest extends TestCase
             ->with($this->isType('object'))
             ->willReturn('jwt-token');
 
-        $response = $this->action->__invoke($request);
+        $response = $this->userService->create($payload['name'], $payload['email'], $payload['password']);
 
-        $this->assertEquals(JsonResponse::HTTP_CREATED, $response->getStatusCode());
+        $this->assertIsString($response);
     }
 
     /**
@@ -89,8 +92,6 @@ class RegisterTest extends TestCase
             'password' => 'random_password',
         ];
 
-        $request = new Request([], [], [], [], [], [], \json_encode($payload));
-
         $user = new User('name', 'user@api.com');
 
         $this->userRepository
@@ -101,6 +102,6 @@ class RegisterTest extends TestCase
 
         $this->expectException(UserAlreadyExistException::class);
 
-        $this->action->__invoke($request);
+        $this->userService->create($payload['name'], $payload['email'], $payload['password']);
     }
 }
