@@ -5,6 +5,8 @@ services:
 
         bind:
             $roleValidators: !tagged app.role_validator
+            $host:           '%env(HOST)%'
+            $defaultSender:  '%env(MAILER_DEFAULT_SENDER)%'
 
     App\:
         resource: '../src/*'

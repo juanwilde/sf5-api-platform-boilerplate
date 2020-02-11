@@ -9,12 +9,33 @@ It contains all the features needed to start building an API:
 - Basic configuration for resources and serialization groups for API Platform
 - Endpoints to manage users (register, get, update, delete)
 ![Endpoints](./docs/endpoints.png)
+- Mailer service with default configuration to use your google account to send emails `symfony/google-mailer` (https://symfony.com/doc/current/mailer.html). Feel free to add your custom provider!
 - Fixtures for testing
 - Unit test for the Register action
 - Functional tests to cover the user endpoints use cases
 
 IMPORTANT: to run functional tests access the database container and create a database called `database_test` or create your own configuration. `doctrine/doctrine-fixtures-bundle` and `liip/test-fixtures-bundle` are included.
 
+## Folder structure
+```
+src
+├───Api/
+│   ├───Action/ <- Custom endpoints
+│   ├───Listener/ <- API Platform listeners
+├───DataFixtures/ <- Functional tests fake data
+├───Entity/ <- Doctrine entities
+├───Exception/ <- Domain exceptions
+├───Migrations/ <- First migration (new migrations will be added here)
+├───Repository/ <- Base repository and your repositories extending from it
+├───Security/
+│   ├───Authorization/ <- Place for your Voters
+│   ├───Core/ <- UserProvider location
+│   ├───Validator/ <- Your custom validators (see services.yml to check how they work
+├───Service/ <- Your app services go here
+├───Templating/ <- Reference to templates used by the MailerService
+├───templates/ <- Twig templates for emails
+├───tests/ <- Functional and unit tests
+```
 
 ## Usage
 - `make build` to build the docker environment
@@ -35,10 +56,6 @@ IMPORTANT: to run functional tests access the database container and create a da
 ## Contributing
 Feel free to clone, fork or PR this repo
 
-## Coming soon
-- Action to activate users sending an email with an activation code.
-- Action to reset user password (forgot password)
-- Action to change password
 
 ## License
 This bundle is under the MIT license.
