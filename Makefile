@@ -10,6 +10,7 @@ help: ## Show this help message
 	@egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
 
 run: ## Start the containers
+	$(MAKE) copy-files
 	U_ID=${UID} docker-compose up -d
 
 stop: ## Stop the containers
@@ -19,11 +20,17 @@ restart: ## Restart the containers
 	$(MAKE) stop && $(MAKE) run
 
 build: ## Rebuilds all the containers
+	$(MAKE) copy-files
 	U_ID=${UID} docker-compose build
 
 prepare: ## Runs backend commands
+	$(MAKE) copy-files
 	$(MAKE) composer-install
 	$(MAKE) migrations
+
+copy-files: ## Creates a copy of .env and docker-compose.yml.dist file to use locally
+	cp -n .env .env.local || true
+	cp -n docker-compose.yml.dist docker-compose.yml || true
 
 # Backend commands
 composer-install: ## Installs composer dependencies
@@ -51,4 +58,4 @@ generate-ssh-keys: ## Generate ssh keys in the container
 tests: ## Runs Unit and Functional tests
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_BE} bin/phpunit
 
-.PHONY: tests
+.PHONY: tests migrations copy-files

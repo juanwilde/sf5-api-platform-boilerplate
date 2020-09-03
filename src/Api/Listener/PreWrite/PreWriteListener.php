@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Api\Listener;
+namespace App\Api\Listener\PreWrite;
 
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 

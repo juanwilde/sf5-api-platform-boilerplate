@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Exception\User\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserRepository extends BaseRepository
@@ -14,10 +15,11 @@ class UserRepository extends BaseRepository
         return User::class;
     }
 
-    public function findOneByEmail(string $email): ?User
+    public function findOneByEmailOrFail(string $email): User
     {
-        /** @var User $user */
-        $user = $this->objectRepository->findOneBy(['email' => $email]);
+        if (null === $user = $this->objectRepository->findOneBy(['email' => $email])) {
+            throw UserNotFoundException::fromEmail($email);
+        }
 
         return $user;
     }

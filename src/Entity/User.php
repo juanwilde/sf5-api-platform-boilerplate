@@ -5,30 +5,29 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Security\Role;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 
 class User implements UserInterface
 {
-    private ?string $id;
+    private string $id;
     private string $name;
     private string $email;
-    private string $password;
+    private ?string $password;
     private array $roles;
-    private ?string $token = null;
+    private ?string $token;
+    private bool $active;
     private \DateTime $createdAt;
     private \DateTime $updatedAt;
 
-    /**
-     * @throws \Exception
-     */
-    public function __construct(string $name, string $email, string $id = null)
+    public function __construct(string $name, string $email)
     {
-        $this->id = $id ?? Uuid::uuid4()->toString();
+        $this->id = Uuid::v4()->toRfc4122();
         $this->name = $name;
         $this->email = $email;
-        $this->roles[] = Role::ROLE_USER;
+        $this->roles = [Role::ROLE_USER];
         $this->token = \sha1(\uniqid('app'));
+        $this->active = false;
         $this->createdAt = new \DateTime();
         $this->markAsUpdated();
     }
@@ -86,6 +85,16 @@ class User implements UserInterface
     public function setToken(?string $token): void
     {
         $this->token = $token;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
     }
 
     public function getCreatedAt(): \DateTime

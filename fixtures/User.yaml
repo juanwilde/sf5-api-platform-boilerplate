@@ -1,0 +1,25 @@
+parameters: # password
+  testing_password_hash: $argon2i$v=19$m=16,t=2,p=1$cGFzc3dvcmQ$A9HKT/FCm9ft8VCFgT4rVw
+
+App\Entity\User:
+  User-0:
+    __construct:
+      name: Admin
+      email: admin@api.com
+    password: <{testing_password_hash}>
+    roles: [ ROLE_ADMIN ]
+    active: true
+    token: null
+  User-1:
+    __construct:
+      name: User
+      email: user@api.com
+    password: <{testing_password_hash}>
+    active: true
+    token: null
+  User-2:
+    __construct:
+      name: Inactive User
+      email: inactive.user@api.com
+    password: <{testing_password_hash}>
+    token: '123456'

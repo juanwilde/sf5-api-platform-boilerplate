@@ -1,4 +1,4 @@
-FROM php:7.4.0-fpm
+FROM php:7.4.6-fpm
 
 ARG UID
 EXPOSE $UID
@@ -20,6 +20,7 @@ RUN apt-get update \
     && docker-php-ext-enable --ini-name 05-opcache.ini opcache xdebug
 
 RUN curl --insecure https://getcomposer.org/composer.phar -o /usr/bin/composer && chmod +x /usr/bin/composer
+RUN composer self-update
 
 RUN wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer
 RUN chmod a+x php-cs-fixer

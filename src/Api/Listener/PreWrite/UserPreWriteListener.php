@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Api\Listener\User;
+namespace App\Api\Listener\PreWrite;
 
-use App\Api\Action\RequestTransformer;
-use App\Api\Listener\PreWriteListener;
 use App\Entity\User;
 use App\Security\Validator\Role\RoleValidator;
 use App\Service\Password\EncoderService;
+use App\Service\Request\RequestService;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 class UserPreWriteListener implements PreWriteListener
@@ -45,7 +44,7 @@ class UserPreWriteListener implements PreWriteListener
             $user->setPassword(
                 $this->encoderService->generateEncodedPasswordForUser(
                     $user,
-                    RequestTransformer::getRequiredField($request, 'password')
+                    RequestService::getField($request, 'password')
                 )
             );
         }
