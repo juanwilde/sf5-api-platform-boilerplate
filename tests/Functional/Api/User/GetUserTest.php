@@ -10,18 +10,18 @@ class GetUserTest extends UserTestBase
 {
     public function testGetUsersForAdmin(): void
     {
-        self::$admin->request('GET', \sprintf('%s.%s', $this->endpoint, self::FORMAT));
+        self::$admin->request('GET', $this->endpoint);
 
         $response = self::$admin->getResponse();
         $responseData = $this->getResponseData($response);
 
         $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $this->assertCount(2, $responseData['hydra:member']);
+        $this->assertCount(3, $responseData['hydra:member']);
     }
 
     public function testGetUsersForUser(): void
     {
-        self::$user->request('GET', \sprintf('%s.%s', $this->endpoint, self::FORMAT));
+        self::$user->request('GET', $this->endpoint);
 
         $response = self::$user->getResponse();
 
@@ -30,18 +30,20 @@ class GetUserTest extends UserTestBase
 
     public function testGetUserWithAdmin(): void
     {
-        self::$admin->request('GET', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['user_id'], self::FORMAT));
+        $userId = $this->getUserId();
+
+        self::$admin->request('GET', \sprintf('%s/%s', $this->endpoint, $userId));
 
         $response = self::$admin->getResponse();
         $responseData = $this->getResponseData($response);
 
         $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals(self::IDS['user_id'], $responseData['id']);
+        $this->assertEquals($userId, $responseData['id']);
     }
 
     public function testGetAdminWithUser(): void
     {
-        self::$user->request('GET', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['admin_id'], self::FORMAT));
+        self::$user->request('GET', \sprintf('%s/%s', $this->endpoint, $this->getAdminId()));
 
         $response = self::$user->getResponse();
 

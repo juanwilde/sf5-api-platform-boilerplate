@@ -1,45 +1,22 @@
 App\Entity\User:
   attributes:
     normalization_context:
-      groups: ['user_read']
+      groups: [user_read]
   collectionOperations:
     get:
-      method: 'GET'
-      security: 'is_granted("USER_READ")'
+      method: GET
+      security: is_granted("USER_READ")
     register_user:
-      method: 'POST'
-      route_name: 'user_register'
+      method: POST
+      path: /users/register
+      controller: App\Api\Action\User\Register
       denormalization_context:
-        groups: ['user_post']
-      openapi_context:
-        requestBody:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  email:
-                    type: string
-                  password:
-                    type: string
-        parameters: []
-        responses:
-          201:
-            description: OK
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    token:
-                      type: string
-    login:
-      method: 'POST'
-      route_name: 'api_login_check'
+        groups: [user_register]
+    login_user:
+      method: POST
+      route_name: api_login_check
       denormalization_context:
-        groups: ['user_post']
+        groups: [user_post]
       openapi_context:
         requestBody:
           content:
@@ -51,7 +28,6 @@ App\Entity\User:
                     type: string
                   password:
                     type: string
-        parameters: []
         responses:
           200:
             description: OK
@@ -64,33 +40,13 @@ App\Entity\User:
                       type: string
   itemOperations:
     get:
-      method: 'GET'
-      security: 'is_granted("USER_READ", object)'
+      method: GET
+      security: is_granted("USER_READ", object)
     put:
-      method: 'PUT'
-      security: 'is_granted("USER_UPDATE", object)'
+      method: PUT
+      security: is_granted("USER_UPDATE", object)
       denormalization_context:
-        groups: ['user_put']
-      swagger_context:
-        parameters:
-          - in: body
-            name: user
-            description: The user to update
-            schema:
-              type: object
-              required:
-                - name
-                - email
-                - roles
-              properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                roles:
-                  type: array
-                  items:
-                    type: string
+        groups: [user_update]
     delete:
-      method: 'DELETE'
-      security: 'is_granted("USER_DELETE", object)'
+      method: DELETE
+      security: is_granted("USER_DELETE", object)

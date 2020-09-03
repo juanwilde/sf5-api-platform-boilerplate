@@ -1,12 +1,12 @@
 App\Entity\User:
   attributes:
     id:
-      groups: ['user_read']
+      groups: [user_read]
     name:
-      groups: ['user_read', 'user_post', 'user_put']
+      groups: [user_read, user_register, user_update]
     email:
-      groups: ['user_read', 'user_post']
+      groups: [user_read, user_register]
     password:
-      groups: ['user_post', 'user_post', 'user_put']
+      groups: [user_register, user_update]
     roles:
-      groups: ['user_read', 'user_post', 'user_put']
+      groups: [user_read, user_register, user_update]

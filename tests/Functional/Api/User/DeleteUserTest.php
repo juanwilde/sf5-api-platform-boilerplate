@@ -10,7 +10,7 @@ class DeleteUserTest extends UserTestBase
 {
     public function testDeleteUserWithAdmin(): void
     {
-        self::$admin->request('DELETE', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['user_id'], self::FORMAT));
+        self::$admin->request('DELETE', \sprintf('%s/%s', $this->endpoint, $this->getUserId()));
 
         $response = self::$admin->getResponse();
 
@@ -19,7 +19,7 @@ class DeleteUserTest extends UserTestBase
 
     public function testDeleteAdminWithUser(): void
     {
-        self::$user->request('DELETE', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['admin_id'], self::FORMAT));
+        self::$user->request('DELETE', \sprintf('%s/%s', $this->endpoint, $this->getAdminId()));
 
         $response = self::$user->getResponse();
 

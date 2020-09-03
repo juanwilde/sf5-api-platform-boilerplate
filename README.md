@@ -39,23 +39,25 @@ src
 
 ## Usage
 - `make build` to build the docker environment
+- `make run` to spin up containers
 - `make prepare` to install dependencies and run migrations
 - `make generate-ssh-keys` to generate JWT certificates
-- `http://localhost:500/api/v1/docs` to check the Open API v3 documentation
+- Navigate to `http://localhost:500/api/v1/docs` to check the Open API v3 documentation
 - `make restart` to stop and start containers
 - `make ssh-be` to access the PHP container bash
 - `make be-logs` to tail dev logs
 - `make code-style` to run PHP-CS-FIXER on src and tests
 - `make tests` to run the test suite
 
+IMPORTANT: depending on if you are using MacOS or Linux check the configuration for Xdebug in your `docker-compose.yml` file and choose the correct one for your needs
+
 ## Stack:
-- `NGINX` container
-- `PHP7.4 FPM` container
-- `MySQL 5.7` container + `volume`
+- `NGINX 1.19` container
+- `PHP 7.4 FPM` container
+- `MySQL 8.0` container + `volume`
 
 ## Contributing
 Feel free to clone, fork or PR this repo
-
 
 ## License
 This bundle is under the MIT license.

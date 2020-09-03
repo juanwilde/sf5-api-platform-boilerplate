@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Api\Action\User;
 
-use App\Api\Action\RequestTransformer;
+use App\Entity\User;
+use App\Service\Request\RequestService;
 use App\Service\User\UserService;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class Register
 {
@@ -20,18 +19,14 @@ class Register
     }
 
     /**
-     * @Route("/users/register", methods={"POST"}, name="user_register")
-     *
      * @throws \Exception
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request): User
     {
-        $token = $this->userService->create(
-            RequestTransformer::getRequiredField($request, 'name'),
-            RequestTransformer::getRequiredField($request, 'email'),
-            RequestTransformer::getRequiredField($request, 'password')
+        return $this->userService->create(
+            RequestService::getField($request, 'name'),
+            RequestService::getField($request, 'email'),
+            RequestService::getField($request, 'password')
         );
-
-        return new JsonResponse(['token' => $token], JsonResponse::HTTP_CREATED);
     }
 }

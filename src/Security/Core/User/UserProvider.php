@@ -37,7 +37,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
     private function findUser(string $username): UserInterface
     {
-        $user = $this->userRepository->findOneByEmail($username);
+        $user = $this->userRepository->findOneByEmailOrFail($username);
 
         if (null === $user) {
             throw new UsernameNotFoundException(\sprintf('User with email %s not found', $username));

@@ -10,7 +10,7 @@ api_platform:
             apiKey:
                 name: Authorization
                 type: header
-    title: 'SF5 + API Platform and Docker'
-    description: 'An awesome API built with Symfony 5.0, PHP 7.4 and API Platform'
+    title: 'Symfony 5 + API Platform'
+    description: 'An awesome API built with Symfony 5, PHP 7.4 and API Platform!'
     version: 1.0
     show_webby: false

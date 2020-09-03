@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Exception\Role;
 
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-class RequiredRoleToAddRoleAdminNotFoundException extends BadRequestHttpException
+class RequiredRoleToAddRoleAdminNotFoundException extends \DomainException
 {
-    private const MESSAGE = '%s required to perform this operation';
-
     public static function fromRole(string $role): self
     {
-        throw new self(\sprintf(self::MESSAGE, $role));
+        throw new self(\sprintf('%s required to perform this operation', $role));
     }
 }

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Service\User;
 
 use App\Entity\User;
 use App\Exception\User\UserAlreadyExistException;
+use App\Exception\User\UserNotFoundException;
 use App\Repository\UserRepository;
 use App\Service\Mailer\MailerService;
 use App\Service\Password\EncoderService;
@@ -42,9 +43,6 @@ class UserServiceTest extends TestCase
         $this->userService = new UserService($this->userRepository, $this->JWTTokenManager, $this->encoderService, $this->mailerService, $this->host);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function testCreateUser(): void
     {
         $payload = [
@@ -52,12 +50,6 @@ class UserServiceTest extends TestCase
             'email' => 'username@api.com',
             'password' => 'random_password',
         ];
-
-        $this->userRepository
-            ->expects($this->exactly(1))
-            ->method('findOneByEmail')
-            ->with($payload['email'])
-            ->willReturn(null);
 
         $this->encoderService
             ->expects($this->exactly(1))
@@ -70,20 +62,11 @@ class UserServiceTest extends TestCase
             ->method('save')
             ->with($this->isType('object'));
 
-        $this->JWTTokenManager
-            ->expects($this->exactly(1))
-            ->method('create')
-            ->with($this->isType('object'))
-            ->willReturn('jwt-token');
-
         $response = $this->userService->create($payload['name'], $payload['email'], $payload['password']);
 
-        $this->assertIsString($response);
+        $this->assertInstanceOf(User::class, $response);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function testCreateUserForExistingEmail(): void
     {
         $payload = [
@@ -92,13 +75,11 @@ class UserServiceTest extends TestCase
             'password' => 'random_password',
         ];
 
-        $user = new User('name', 'user@api.com');
-
         $this->userRepository
             ->expects($this->exactly(1))
-            ->method('findOneByEmail')
-            ->with($payload['email'])
-            ->willReturn($user);
+            ->method('save')
+            ->with($this->isType('object'))
+            ->willThrowException(new UserNotFoundException());
 
         $this->expectException(UserAlreadyExistException::class);
 

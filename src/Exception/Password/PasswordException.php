@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exception\Password;
 
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-class PasswordException extends BadRequestHttpException
+class PasswordException extends \DomainException
 {
     public static function invalidLength(): self
     {

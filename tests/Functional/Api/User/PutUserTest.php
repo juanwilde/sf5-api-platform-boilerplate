@@ -20,13 +20,15 @@ class PutUserTest extends UserTestBase
             ],
         ];
 
-        self::$admin->request('PUT', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['user_id'], self::FORMAT), [], [], [], \json_encode($payload));
+        $userId = $this->getUserId();
+
+        self::$admin->request('PUT', \sprintf('%s/%s', $this->endpoint, $userId), [], [], [], \json_encode($payload));
 
         $response = self::$admin->getResponse();
         $responseData = $this->getResponseData($response);
 
         $this->assertEquals(JsonResponse::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals(self::IDS['user_id'], $responseData['id']);
+        $this->assertEquals($userId, $responseData['id']);
         $this->assertEquals($payload['name'], $responseData['name']);
         $this->assertEquals($payload['roles'], $responseData['roles']);
     }
@@ -42,7 +44,7 @@ class PutUserTest extends UserTestBase
             ],
         ];
 
-        self::$user->request('PUT', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['admin_id'], self::FORMAT), [], [], [], \json_encode($payload));
+        self::$user->request('PUT', \sprintf('%s/%s', $this->endpoint, $this->getAdminId()), [], [], [], \json_encode($payload));
 
         $response = self::$user->getResponse();
 
@@ -60,7 +62,7 @@ class PutUserTest extends UserTestBase
             ],
         ];
 
-        self::$admin->request('PUT', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['user_id'], self::FORMAT), [], [], [], \json_encode($payload));
+        self::$admin->request('PUT', \sprintf('%s/%s', $this->endpoint, $this->getUserId()), [], [], [], \json_encode($payload));
 
         $response = self::$admin->getResponse();
 
@@ -78,7 +80,7 @@ class PutUserTest extends UserTestBase
             ],
         ];
 
-        self::$user->request('PUT', \sprintf('%s/%s.%s', $this->endpoint, self::IDS['user_id'], self::FORMAT), [], [], [], \json_encode($payload));
+        self::$user->request('PUT', \sprintf('%s/%s', $this->endpoint, $this->getUserId()), [], [], [], \json_encode($payload));
 
         $response = self::$user->getResponse();
 

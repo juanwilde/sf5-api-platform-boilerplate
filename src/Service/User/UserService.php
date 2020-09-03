@@ -38,23 +38,20 @@ class UserService
     /**
      * @throws \Exception
      */
-    public function create(string $name, string $email, string $password): string
+    public function create(string $name, string $email, string $password): User
     {
-        $existingUser = $this->userRepository->findOneByEmail($email);
-        if (null !== $existingUser) {
-            throw UserAlreadyExistException::fromUserEmail($email);
-        }
-
-        $this->encoderService->validatePassword($password);
-
         $user = new User($name, $email);
         $user->setPassword($this->encoderService->generateEncodedPasswordForUser($user, $password));
 
-        $this->userRepository->save($user);
+        try {
+            $this->userRepository->save($user);
+        } catch (\Exception $e) {
+            throw UserAlreadyExistException::fromUserEmail($email);
+        }
 
         $this->sendActivationEmail($user);
 
-        return $this->JWTTokenManager->create($user);
+        return $user;
     }
 
     /**
